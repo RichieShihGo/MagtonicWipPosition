@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/position_container">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/materialNoTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:text="@string/material_no_title"
+                    android:gravity="center"/>
+
+                <EditText
+                    android:id="@+id/editTextPoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:hint="@string/barcode_input_hint"
+                    android:textAlignment="center"
+                    android:inputType="textCapCharacters"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:lines="1" />
+            </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutPosition"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/storageLocationTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:text="@string/storage_location_title"
+                    android:gravity="center"/>
+                <TextView
+                    android:id="@+id/storageLocationContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:text=""
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/storageLocationMatch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:text=""
+                    android:gravity="center"/>
+                <TextView
+                    android:id="@+id/storageLocationUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:text=""
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/resultImage"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:src="@drawable/circle_green"
+                android:visibility="invisible"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

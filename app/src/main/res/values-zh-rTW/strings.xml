@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">線邊倉</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">期美科技</string>
+    <string name="nav_header_subtitle">線邊倉App</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="nav_about">關於</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="version_string">版本: %d.%s</string>
+
+    <string name="confirm">確定</string>
+    <string name="cancel">取消</string>
+    <string name="exit_app_msg">關閉這個App?</string>
+
+    <string name="get_or_send_failed_wifi_is_not_connected">Wifi沒有連線無法取得或上傳資訊</string>
+    <string name="barcode_scanning_get_info">取得資訊中...</string>
+    <string name="barcode_scan_off_because_wifi_is_not_connected">掃描無效，WiFi尚未連線</string>
+    <string name="this_position_not_exist">無此儲位</string>
+    <string name="toast_network_error">網路連線失敗,請檢查</string>
+    <string name="toast_server_error">伺服器錯誤,請通知資訊人員</string>
+    <string name="barcode_input_hint">請掃描或手動輸入</string>
+    <string name="menu_position">定位</string>
+    <string name="material_no_title">物料卡編號</string>
+    <string name="storage_location_title">存放區位置</string>
+    <string name="storage_location">儲區: %s</string>
+    <string name="storage_match">" 儲區符合"</string>
+    <string name="storage_mismatch">儲區不符</string>
+    <string name="locate_update_success">定位成功!</string>
+    <string name="locate_update_failed">定位失敗!</string>
+    <string name="unknown_barcode">非物料或儲位條碼</string>
+</resources>
