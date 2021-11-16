@@ -17,7 +17,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
+import androidx.annotation.RequiresApi
+
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -73,6 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var toastHandle: Toast? = null
     private var isBarcodeScanning: Boolean = false
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -108,15 +110,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         }*/
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { //api 31
+            screenHeight = windowManager.currentWindowMetrics.bounds.height()
+            screenWidth = windowManager.currentWindowMetrics.bounds.width()
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { //api 30
             mContext!!.display!!.getRealMetrics(displayMetrics)
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                screenHeight = displayMetrics.heightPixels
-                screenWidth = displayMetrics.widthPixels
-            } else {
-                screenHeight = windowManager.currentWindowMetrics.bounds.height()
-                screenWidth = windowManager.currentWindowMetrics.bounds.width()
-            }
+            screenHeight = displayMetrics.heightPixels
+            screenWidth = displayMetrics.widthPixels
         } else { // < Build.VERSION_CODES.R
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
                 windowManager.defaultDisplay.getMetrics(displayMetrics)
