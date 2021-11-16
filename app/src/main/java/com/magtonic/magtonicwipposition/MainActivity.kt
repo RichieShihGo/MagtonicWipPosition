@@ -1,11 +1,11 @@
 package com.magtonic.magtonicwipposition
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -27,6 +27,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -50,6 +52,8 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
     private val mTAG = MainActivity::class.java.name
+
+    private val requestIdMultiplePermission = 1
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -198,6 +202,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         if (materialNo != null && materialNo != "") {
                             updatePositionDate(materialNo)
                         }
+
+                    } else if (intent.action!!.equals(Constants.ACTION.ACTION_POSITION_SCAN_BARCODE_CAMERA, ignoreCase = true)) {
+                        Log.d(mTAG, "ACTION_POSITION_SCAN_BARCODE_CAMERA")
+
+                        val cameraData = intent.getStringExtra("CAMERA_DATA")
+                        Log.d(mTAG, "camera_data = $cameraData")
+                        //showMyToast(text, ReceiptActivity.this);
+                        if (cameraData != null && cameraData != "") {
+                            val firstChar: String = cameraData.substring(0, 1)
+                            if (firstChar == "T") {
+                                barcode = ScanBarcode.setPoBarcodeByScanTransform(cameraData.toString().trim())
+
+                                if (cameraData.length >= 9) { //material no
+                                    val scanIntent = Intent()
+                                    scanIntent.action =
+                                        Constants.ACTION.ACTION_POSITION_SCAN_BARCODE
+                                    scanIntent.putExtra(
+                                        "BARCODE_BY_SCAN",
+                                        barcode!!.poBarcodeByScan
+                                    )
+                                    //scanIntent.putExtra("BARCODE", barcode!!.poBarcode)
+                                    //scanIntent.putExtra("LINE", barcode!!.poLine)
+                                    sendBroadcast(scanIntent)
+                                    getPosition(barcode)
+                                } else { //storage location
+                                    isBarcodeScanning = false
+                                    toast(getString(R.string.storage_location, cameraData))
+
+                                    val scanIntent = Intent()
+                                    scanIntent.action =
+                                        Constants.ACTION.ACTION_POSITION_PASS_STORAGE
+                                    scanIntent.putExtra(
+                                        "STORAGE_LOCATION",
+                                        barcode!!.poBarcodeByScan
+                                    )
+                                    sendBroadcast(scanIntent)
+                                }
+                            } else { //firstChar is not "T"
+
+                                toast(getString(R.string.unknown_barcode))
+
+                                val scanIntent = Intent()
+                                scanIntent.action = Constants.ACTION.ACTION_POSITION_SCAN_BARCODE
+                                sendBroadcast(scanIntent)
+                            }
+                        }
+
 
                     }
                 }
@@ -358,6 +409,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             filter.addAction(Constants.ACTION.ACTION_HIDE_KEYBOARD)
             filter.addAction(Constants.ACTION.ACTION_USER_INPUT_SEARCH)
             filter.addAction(Constants.ACTION.ACTION_POSITION_UPDATE_ACTION)
+            filter.addAction(Constants.ACTION.ACTION_POSITION_SCAN_BARCODE_CAMERA)
             filter.addAction("android.net.wifi.STATE_CHANGE")
             filter.addAction("android.net.wifi.WIFI_STATE_CHANGED")
             filter.addAction("unitech.scanservice.data")
@@ -423,6 +475,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.action_camera -> {
+                getPermissionsCamera()
+            }
+
+
+        }
+
+
         return true
     }
 
@@ -794,5 +862,77 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    private fun getPermissionsCamera() {
 
+        val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+
+        val listPermissionsNeeded = ArrayList<String>()
+
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA)
+        }
+
+        if (listPermissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                listPermissionsNeeded.toTypedArray(),
+                requestIdMultiplePermission
+            )
+            //return false;
+        } else {
+            Log.e(mTAG, "camera permission is granted")
+
+            val intent = Intent(mContext, CameraActivity::class.java)
+            /*
+            intent.putExtra("SEND_ORDER", currentSendOrder)
+            intent.putExtra("TITLE", getString(R.string.nav_outsourced))
+            intent.putExtra("WAREHOUSE", currentWarehouse)
+            intent.putExtra("SEND_FRAGMENT", "OUTSOURCED_PROCESS")
+             */
+            startActivity(intent)
+        }
+
+        /*if( ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, String[]{Manifest.permission.CAMERA},1)
+        }*/
+
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        Log.d(mTAG, "Permission callback called------- permissions.size = ${permissions.size}")
+        when (requestCode) {
+            requestIdMultiplePermission -> {
+
+                val perms: HashMap<String, Int> = HashMap()
+
+                // Initialize the map with both permissions
+                perms[Manifest.permission.CAMERA] = PackageManager.PERMISSION_GRANTED
+
+                if (grantResults.isNotEmpty()) {
+                    for (i in permissions.indices) {
+                        perms[permissions[i]] = grantResults[i]
+                        Log.e(mTAG, "perms[permissions[$i]] = ${permissions[i]}")
+
+                    }
+                    // Check for both permissions
+                    if (perms[Manifest.permission.CAMERA] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(mTAG, "camera permission granted")
+
+                    } else {
+                        Log.d(mTAG, "Some permissions are not granted ask again ")
+
+                    }//&& perms.get(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED &&
+                    //perms.get(Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED
+                }
+            }
+        }
+
+    }
 }

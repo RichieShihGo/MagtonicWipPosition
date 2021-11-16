@@ -21,6 +21,8 @@ class Constants {
             const val ACTION_POSITION_UPDATE_ACTION : String = "com.magtonic.magtonicwipposition.PositionUpdateAction"
             const val ACTION_POSITION_UPDATE_FAILED : String = "com.magtonic.magtonicwipposition.PositionUpdateFailed"
             const val ACTION_POSITION_UPDATE_SUCCESS : String = "com.magtonic.magtonicwipposition.PositionUpdateSuccess"
+            //scan use camera
+            const val ACTION_POSITION_SCAN_BARCODE_CAMERA : String = "com.magtonic.magtonicwipposition.PositionScanBarcodeCamera"
         }
     }
 }
