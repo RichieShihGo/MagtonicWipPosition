@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Color
+
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -31,9 +31,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.Fragment
 import com.google.gson.Gson
-import com.magtonic.magtonicwipposition.BuildConfig.VERSION_NAME
 import com.magtonic.magtonicwipposition.api.ApiFunc
 import com.magtonic.magtonicwipposition.data.Constants
 import com.magtonic.magtonicwipposition.databinding.ActivityMainBinding
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     var barcode: ScanBarcode? = null
-    private var navView: NavigationView? = null
+    //private var navView: NavigationView? = null
     private var toastHandle: Toast? = null
     private var isBarcodeScanning: Boolean = false
 

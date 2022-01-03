@@ -1,35 +1,24 @@
 package com.magtonic.magtonicwipposition
 
-import android.Manifest
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.vision.barcode.BarcodeDetector
 
-import com.google.android.gms.vision.CameraSource
-
-import android.widget.TextView
-
-import android.view.SurfaceView
 import com.magtonic.magtonicwipposition.databinding.ActivityCameraBinding
-import com.magtonic.magtonicwipposition.databinding.ActivityMainBinding
+
 import com.google.android.gms.vision.barcode.Barcode
-import android.view.SurfaceHolder
-import androidx.core.app.ActivityCompat
-import java.io.IOException
-import com.google.android.gms.vision.Detector
-import android.util.SparseArray
-import com.google.mlkit.vision.barcode.Barcode.*
+
 
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 
 import com.google.mlkit.vision.barcode.BarcodeScanner
-import androidx.annotation.NonNull
+
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -37,12 +26,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 
-import com.google.android.gms.tasks.OnFailureListener
 
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.mlkit.vision.common.InputImage
 import com.magtonic.magtonicwipposition.data.Constants
-import kotlinx.android.synthetic.main.activity_camera.*
+
 import java.util.concurrent.Executors
 
 
@@ -232,7 +219,7 @@ class CameraActivity : AppCompatActivity() {
                     cameraSelector,
                     previewUseCase,
                     analysisUseCase
-//TODO: Add Image analysis use case
+
                 )
             } catch (illegalStateException: IllegalStateException) {
                 // If the use case has already been bound to another lifecycle or method is not called on main thread.

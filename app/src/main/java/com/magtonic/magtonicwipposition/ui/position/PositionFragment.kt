@@ -40,7 +40,7 @@ class PositionFragment : Fragment() {
     private var mReceiver: BroadcastReceiver? = null
     private var isRegister = false
 
-    private var toastHandle: Toast? = null
+    //private var toastHandle: Toast? = null
 
     private var positionContext: Context? = null
 
@@ -58,9 +58,9 @@ class PositionFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentPositionBinding.inflate(inflater, container, false)
         val root: View = binding.root
