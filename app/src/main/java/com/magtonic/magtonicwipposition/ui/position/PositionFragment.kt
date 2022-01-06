@@ -25,7 +25,7 @@ class PositionFragment : Fragment() {
 
     private val mTAG = PositionFragment::class.java.name
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var positionViewModel: PositionViewModel
     private var _binding: FragmentPositionBinding? = null
 
     // This property is only valid between onCreateView and
@@ -59,8 +59,8 @@ class PositionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
+        positionViewModel =
+            ViewModelProvider(this)[PositionViewModel::class.java]
 
         _binding = FragmentPositionBinding.inflate(inflater, container, false)
         val root: View = binding.root

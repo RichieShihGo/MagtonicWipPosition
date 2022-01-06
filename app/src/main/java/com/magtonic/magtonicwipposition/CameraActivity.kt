@@ -116,49 +116,17 @@ class CameraActivity : AppCompatActivity() {
     override fun onDestroy() {
         Log.i(mTAG, "onDestroy")
 
-        //enable Scan2Key Setting
-        /*val enableServiceIntent = Intent()
-        enableServiceIntent.action = "unitech.scanservice.scan2key_setting"
-        enableServiceIntent.putExtra("scan2key", true)
-        sendBroadcast(enableServiceIntent)
-
-        if (isRegister && mReceiver != null) {
-            try {
-                mContext!!.unregisterReceiver(mReceiver)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-
-            isRegister = false
-            mReceiver = null
-            Log.d(mTAG, "unregisterReceiver mReceiver")
-        }*/
-
         super.onDestroy()
     }
 
     override fun onResume() {
         Log.i(mTAG, "onResume")
         super.onResume()
-
-        //disable Scan2Key Setting
-        /*val disableServiceIntent = Intent()
-        disableServiceIntent.action = "unitech.scanservice.scan2key_setting"
-        disableServiceIntent.putExtra("scan2key", false)
-        sendBroadcast(disableServiceIntent)
-        */
     }
 
     override fun onPause() {
         Log.i(mTAG, "onPause")
         super.onPause()
-
-        //disable Scan2Key Setting
-        /*val enableServiceIntent = Intent()
-        enableServiceIntent.action = "unitech.scanservice.scan2key_setting"
-        enableServiceIntent.putExtra("scan2key", true)
-        sendBroadcast(enableServiceIntent)
-        */
     }
 
     override fun onBackPressed() {
