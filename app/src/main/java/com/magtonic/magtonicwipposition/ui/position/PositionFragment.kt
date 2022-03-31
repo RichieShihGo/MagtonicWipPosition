@@ -233,19 +233,25 @@ class PositionFragment : Fragment() {
 
                         val storageLocation = intent.getStringExtra("STORAGE_LOCATION")
 
-                        Log.e(mTAG, "storageLocation = $storageLocation")
+                        Log.e(mTAG, "storageLocation = $storageLocation, length = ${storageLocation!!.length}")
 
+                        Log.e(mTAG, "barcodeInput!!.text[0:6] = ${barcodeInput!!.text.substring(0,6)}, length = ${barcodeInput!!.text.substring(0,6).length}")
 
-                        if (storageLocation.equals(storageLocationContent!!.text.toString())) {
+                        if (storageLocation == storageLocationContent!!.text.toString()) {
+                        //if (storageLocation == barcodeInput!!.text.substring(0,6)) {
                             storageLocationMatch!!.setTextColor(Color.BLUE)
                             storageLocationMatch!!.text = getString(R.string.storage_match)
 
-                            val updateIntent = Intent()
+                            storageLocationUpdate!!.text = getString(R.string.locate_update_success)
+                            resultImage!!.setImageResource(R.drawable.circle_green)
+                            resultImage!!.visibility = View.VISIBLE
+                            progressBar!!.visibility = View.GONE
+                            /*val updateIntent = Intent()
                             updateIntent.action = Constants.ACTION.ACTION_POSITION_UPDATE_ACTION
                             updateIntent.putExtra("MATERIAL_NO", barcodeInput!!.text.toString())
                             positionContext!!.sendBroadcast(updateIntent)
 
-                            progressBar!!.visibility = View.VISIBLE
+                            progressBar!!.visibility = View.VISIBLE*/
                         } else {
                             storageLocationMatch!!.setTextColor(Color.RED)
                             storageLocationMatch!!.text = getString(R.string.storage_mismatch)
@@ -254,14 +260,6 @@ class PositionFragment : Fragment() {
                             resultImage!!.visibility = View.VISIBLE
                             progressBar!!.visibility = View.GONE
                         }
-
-                    } else if (intent.action!!.equals(Constants.ACTION.ACTION_POSITION_FRAGMENT_REFRESH, ignoreCase = true)) {
-                        Log.d(mTAG, "ACTION_POSITION_FRAGMENT_REFRESH")
-
-                        val data1 = intent.getStringExtra("data1")
-
-                        Log.e(mTAG, "data1 = $data1")
-                        progressBar!!.visibility = View.GONE
 
                     } else if (intent.action!!.equals(Constants.ACTION.ACTION_POSITION_UPDATE_FAILED, ignoreCase = true)) {
                         Log.d(mTAG, "ACTION_POSITION_UPDATE_FAILED")

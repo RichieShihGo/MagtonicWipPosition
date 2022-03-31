@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             if (firstChar == "T") {
                                 barcode = ScanBarcode.setPoBarcodeByScanTransform(cameraData.toString().trim())
 
-                                if (cameraData.length >= 9) { //material no
+                                if (barcode!!.poBarcodeByScan.length == 9) { //material no
                                     val scanIntent = Intent()
                                     scanIntent.action =
                                         Constants.ACTION.ACTION_POSITION_SCAN_BARCODE
@@ -224,18 +224,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     //scanIntent.putExtra("LINE", barcode!!.poLine)
                                     sendBroadcast(scanIntent)
                                     getPosition(barcode)
-                                } else { //storage location
-                                    isBarcodeScanning = false
+                                } else if (barcode!!.poBarcodeByScan.length > 9) {
                                     toast(getString(R.string.storage_location, cameraData))
 
-                                    val scanIntent = Intent()
-                                    scanIntent.action =
-                                        Constants.ACTION.ACTION_POSITION_PASS_STORAGE
-                                    scanIntent.putExtra(
-                                        "STORAGE_LOCATION",
-                                        barcode!!.poBarcodeByScan
-                                    )
-                                    sendBroadcast(scanIntent)
+                                    val storageArray = barcode!!.poBarcodeByScan.split("@")
+                                    if (storageArray.size == 3) {
+                                        toast(getString(R.string.storage_location, storageArray[2]))
+                                        val scanIntent = Intent()
+                                        scanIntent.action =
+                                            Constants.ACTION.ACTION_POSITION_PASS_STORAGE
+                                        //scanIntent.putExtra(
+                                        //"STORAGE_LOCATION",
+                                        //barcode!!.poBarcodeByScan
+                                        //)
+                                        scanIntent.putExtra(
+                                            "STORAGE_LOCATION",
+                                            storageArray[2]
+                                        )
+                                        sendBroadcast(scanIntent)
+                                    } else {
+                                        toast(getString(R.string.unknown_barcode))
+                                    }
+                                } else {
+                                    toast(getString(R.string.unknown_barcode))
                                 }
                             } else { //firstChar is not "T"
 
@@ -322,13 +333,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val bundle = intent.extras
                     if (bundle != null) {
 
-                        if (isWifiConnected) {
+                        //if (isWifiConnected) {
                             //detect if is scanning or not
                             if (!isBarcodeScanning) {
                                 isBarcodeScanning = true
 
                                 val text = bundle.getString("text")
                                 Log.d(mTAG, "text len = ${text!!.length}, text = " + text)
+
                                 //showMyToast(text, ReceiptActivity.this);
                                 val firstChar: String = text.substring(0, 1)
                                 if (firstChar == "T") {
@@ -336,7 +348,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                     if (isWifiConnected) {
 
-                                        if (text.length >= 9) { //material no
+                                        if (barcode!!.poBarcodeByScan.length == 9) { //material no, ex: T16100359
+                                            //isBarcodeScanning = false
                                             val scanIntent = Intent()
                                             scanIntent.action =
                                                 Constants.ACTION.ACTION_POSITION_SCAN_BARCODE
@@ -347,19 +360,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                             //scanIntent.putExtra("BARCODE", barcode!!.poBarcode)
                                             //scanIntent.putExtra("LINE", barcode!!.poLine)
                                             sendBroadcast(scanIntent)
-                                            getPosition(barcode)
-                                        } else { //storage location
-                                            isBarcodeScanning = false
-                                            toast(getString(R.string.storage_location, text))
 
-                                            val scanIntent = Intent()
-                                            scanIntent.action =
-                                                Constants.ACTION.ACTION_POSITION_PASS_STORAGE
-                                            scanIntent.putExtra(
-                                                "STORAGE_LOCATION",
-                                                barcode!!.poBarcodeByScan
-                                            )
-                                            sendBroadcast(scanIntent)
+                                            getPosition(barcode)
+                                        } else if (barcode!!.poBarcodeByScan.length > 9){ //storage location
+                                            isBarcodeScanning = false
+                                            //toast(getString(R.string.storage_location, text))
+
+                                            val storageArray = barcode!!.poBarcodeByScan.split("@")
+                                            if (storageArray.size == 3) {
+                                                toast(getString(R.string.storage_location, storageArray[2]))
+                                                val scanIntent = Intent()
+                                                scanIntent.action =
+                                                    Constants.ACTION.ACTION_POSITION_PASS_STORAGE
+                                                //scanIntent.putExtra(
+                                                    //"STORAGE_LOCATION",
+                                                    //barcode!!.poBarcodeByScan
+                                                //)
+                                                scanIntent.putExtra(
+                                                    "STORAGE_LOCATION",
+                                                    storageArray[2]
+                                                )
+                                                sendBroadcast(scanIntent)
+                                            } else {
+                                                toast(getString(R.string.unknown_barcode))
+                                            }
+
+
+                                        } else {
+                                            toast(getString(R.string.unknown_barcode))
                                         }
 
 
@@ -382,10 +410,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 Log.e(mTAG, "isBarcodeScanning = true")
                                 toast(getString(R.string.barcode_scanning_get_info))
                             }
-                        } else {
-                            Log.e(mTAG, "Wifi is not connected. Barcode scan is useless.")
-                            toast(getString(R.string.barcode_scan_off_because_wifi_is_not_connected))
-                        }
+                        //} else {
+                        //    Log.e(mTAG, "Wifi is not connected. Barcode scan is useless.")
+                        //    toast(getString(R.string.barcode_scan_off_because_wifi_is_not_connected))
+                        //}
                     }
                 }
                 if ("unitech.scanservice.datatype" == intent.action) {
@@ -609,7 +637,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 )
                                 //can't receive the item
                                 //val mess = retItemReceipt.poNumScanTotal + " " + retItemReceipt.rjReceipt?.result2
-                                val mess = rjPosition.result2 as String
+                                val mess = rjPosition.result2
                                 toastLong(mess)
 
 
@@ -712,7 +740,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 )
                                 //can't receive the item
                                 //val mess = retItemReceipt.poNumScanTotal + " " + retItemReceipt.rjReceipt?.result2
-                                val mess = rjUpdatePosition.result2 as String
+                                val mess = rjUpdatePosition.result2
                                 toastLong(mess)
 
 
