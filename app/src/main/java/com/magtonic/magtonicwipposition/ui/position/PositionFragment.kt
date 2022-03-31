@@ -237,8 +237,8 @@ class PositionFragment : Fragment() {
 
                         Log.e(mTAG, "barcodeInput!!.text[0:6] = ${barcodeInput!!.text.substring(0,6)}, length = ${barcodeInput!!.text.substring(0,6).length}")
 
-                        if (storageLocation == storageLocationContent!!.text.toString()) {
-                        //if (storageLocation == barcodeInput!!.text.substring(0,6)) {
+                        if (storageLocation == storageLocationContent!!.text.toString()) { //phase 1
+                        //if (storageLocation == barcodeInput!!.text.substring(0,6)) { // phase 2
                             storageLocationMatch!!.setTextColor(Color.BLUE)
                             storageLocationMatch!!.text = getString(R.string.storage_match)
 
