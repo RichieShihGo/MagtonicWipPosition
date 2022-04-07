@@ -3,6 +3,7 @@ package com.magtonic.magtonicwipposition
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
 
@@ -18,6 +19,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBarDrawerToggle
 
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -27,10 +29,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.magtonic.magtonicwipposition.api.ApiFunc
 import com.magtonic.magtonicwipposition.data.Constants
@@ -43,6 +47,7 @@ import com.magtonic.magtonicwipposition.model.receive.ReceiveTransform
 import com.magtonic.magtonicwipposition.model.send.HttpGetPositionPara
 import com.magtonic.magtonicwipposition.model.send.HttpUpdatePositionPara
 import com.magtonic.magtonicwipposition.model.sys.ScanBarcode
+import com.magtonic.magtonicwipposition.ui.position.PositionFragment
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -76,6 +81,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var toastHandle: Toast? = null
     private var isBarcodeScanning: Boolean = false
 
+
+    var navView: NavigationView? = null
+
+    private var rootView: View ?= null
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +94,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mContext = applicationContext
 
+        rootView = (window.decorView.findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
+
         //disable Scan2Key Setting
         val disableServiceIntent = Intent()
         disableServiceIntent.action = "unitech.scanservice.scan2key_setting"
@@ -91,26 +103,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         sendBroadcast(disableServiceIntent)
 
         val displayMetrics = DisplayMetrics()
-
-        //
-        //mContext!!.display!!.getMetrics(displayMetrics)
-        /*if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M)
-        {
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-            screenHeight = displayMetrics.heightPixels
-            screenWidth = displayMetrics.widthPixels
-        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            mContext!!.display!!.getRealMetrics(displayMetrics)
-
-            screenHeight = displayMetrics.heightPixels
-            screenWidth = displayMetrics.widthPixels
-        } else { //Android 11
-            //mContext!!.display!!.getMetrics(displayMetrics)
-            screenHeight = windowManager.currentWindowMetrics.bounds.height()
-            screenWidth = windowManager.currentWindowMetrics.bounds.width()
-
-        }*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { //api 31
             screenHeight = windowManager.currentWindowMetrics.bounds.height()
@@ -133,26 +125,67 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
+        //setSupportActionBar(binding.appBarMain.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         /*binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }*/
-        val drawerLayout: DrawerLayout = binding.drawerLayout
+        /*val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_position, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_about
+                R.id.nav_position, R.id.nav_about
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        navView.setupWithNavController(navController)*/
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+        Log.e(mTAG, "navView header: "+navView!!.headerCount)
+        val header = navView!!.inflateHeaderView(R.layout.nav_header_main)
+        //textViewUserName = header.findViewById(R.id.textViewUserName)
+        Log.e(mTAG, "navView header: "+navView!!.headerCount)
+        navView!!.removeHeaderView(navView!!.getHeaderView(0))
 
-        navView.setNavigationItemSelectedListener(this)
+        val mDrawerToggle = object : ActionBarDrawerToggle(
+            this, /* host Activity */
+            drawerLayout, /* DrawerLayout object */
+            toolbar, /* nav drawer icon to replace 'Up' caret */
+            R.string.navigation_drawer_open, /* "open drawer" description */
+            R.string.navigation_drawer_close  /* "close drawer" description */
+        ) {
+
+            /** Called when a drawer has settled in a completely closed state.  */
+
+            override fun onDrawerClosed(view: View) {
+                super.onDrawerClosed(view)
+
+                Log.d(mTAG, "onDrawerClosed")
+
+            }
+
+            /** Called when a drawer has settled in a completely open state.  */
+            override fun onDrawerOpened(drawerView: View) {
+                super.onDrawerOpened(drawerView)
+
+                Log.d(mTAG, "onDrawerOpened")
+
+                if (isKeyBoardShow) {
+                    showOrHideKeyboard(false)
+                }
+            }
+        }
+
+        drawerLayout.addDrawerListener(mDrawerToggle)
+        mDrawerToggle.syncState()
+
+        navView!!.setNavigationItemSelectedListener(this)
 
         val filter: IntentFilter
         @SuppressLint("CommitPrefEdits")
@@ -444,6 +477,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             isRegister = true
             Log.d(mTAG, "registerReceiver mReceiver")
         }
+
+        initView()
     }
 
     override fun onDestroy() {
@@ -812,6 +847,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    private fun initView() {
+
+        title = getString(R.string.app_name)
+
+        //show menu
+
+
+        navView!!.menu.getItem(0).isVisible = true //home
+        navView!!.menu.getItem(1).isVisible = true //receipt
+
+        var fragment: Fragment? = null
+        val fragmentClass: Class<*>
+        fragmentClass = PositionFragment::class.java
+
+        try {
+            fragment = fragmentClass.newInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        val fragmentManager = supportFragmentManager
+        //fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment!!).commitAllowingStateLoss()
+
+    }
+
     private fun showExitConfirmDialog() {
 
         // get prompts.xml view
@@ -869,7 +930,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         textViewMsg.text = getString(R.string.version_string, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME)
         var msg = "[20211109] 第一版\n"
-        //msg += "[20210819] 修正伺服器當掉時，使用web service導致App crash。\n"
+        msg += "[20220407] 修正儲區QR code編碼。\n"
         //msg += "3. 新增\"設定\"讓使用者決定手動或自動確認"
         textViewFixMsg.text = msg
 
@@ -947,6 +1008,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         Log.e(mTAG, "perms[permissions[$i]] = ${permissions[i]}")
 
                     }
+
                     // Check for both permissions
                     if (perms[Manifest.permission.CAMERA] == PackageManager.PERMISSION_GRANTED) {
                         Log.d(mTAG, "camera permission granted")
@@ -960,5 +1022,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+    }
+
+    fun showOrHideKeyboard(show: Boolean) {
+
+        if (!show) { //hide
+            //imm?.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0)
+            imm?.hideSoftInputFromWindow(rootView!!.windowToken, 0)
+        } else { // show
+            //imm?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+            imm?.hideSoftInputFromWindow(rootView!!.windowToken, 0)
+        }
     }
 }
