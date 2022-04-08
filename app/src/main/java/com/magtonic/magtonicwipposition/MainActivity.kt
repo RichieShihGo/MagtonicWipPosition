@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContentView(R.layout.activity_main)
         Log.d(mTAG, "onCreate")
 
         mContext = applicationContext
@@ -122,12 +122,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         Log.e(mTAG, "width = $screenWidth, height = $screenHeight")
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        //binding = ActivityMainBinding.inflate(layoutInflater)
+        //setContentView(binding.root)
 
         //setSupportActionBar(binding.appBarMain.toolbar)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         /*binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -555,32 +557,76 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onSupportNavigateUp(): Boolean {
+    /*override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
+    }*/
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Log.e(mTAG, "onNavigationItemSelected")
+        //Log.e(mTAG, "onNavigationItemSelected")
         selectDrawerItem(item)
         return true
     }
 
     private fun selectDrawerItem(menuItem: MenuItem) {
+        Log.e(mTAG, "selectDrawerItem")
+        var fragment: Fragment? = null
+        var fragmentClass: Class<*>? = null
 
+        var title = ""
         //hide keyboard
         val view = currentFocus
 
         if (view != null) {
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            showOrHideKeyboard(false)
         }
 
+        navView!!.menu.getItem(0).isChecked = false //home
+        navView!!.menu.getItem(1).isChecked = false //about
+
+
         when (menuItem.itemId) {
+            R.id.nav_position -> {
+
+                title = getString(R.string.material_location)
+
+                fragmentClass = PositionFragment::class.java
+                menuItem.isChecked = true
+                isBarcodeScanning = false
+
+            }
 
             R.id.nav_about -> {
                 showCurrentVersionDialog()
             }
 
+
+        }
+
+        if (fragmentClass != null) {
+            try {
+                fragment = fragmentClass.newInstance() as Fragment
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+
+            // Insert the fragment by replacing any existing fragment
+            val fragmentManager = supportFragmentManager
+            //fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment!!).commitAllowingStateLoss()
+
+            // Highlight the selected item has been done by NavigationView
+
+            // Set action bar title
+            if (title.isNotEmpty())
+                setTitle(title)
+            else
+                setTitle(menuItem.title)
+
+            // Close the navigation drawer
+            val drawer: DrawerLayout = findViewById(R.id.drawer_layout)
+            drawer.closeDrawer(GravityCompat.START)
         }
     }
 
@@ -849,7 +895,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun initView() {
 
-        title = getString(R.string.app_name)
+        title = getString(R.string.material_location)
 
         //show menu
 

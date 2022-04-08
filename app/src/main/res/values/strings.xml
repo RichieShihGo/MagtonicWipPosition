@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MagtonicWipPosition</string>
+    <string name="app_name">Material Location</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Magtonic</string>
@@ -36,4 +36,5 @@
     <string name="locate_update_success">Locate Success!</string>
     <string name="locate_update_failed">Locate Failed</string>
     <string name="unknown_barcode">Unknown Barcode</string>
+    <string name="material_location">Material Location</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">線邊倉</string>
+    <string name="app_name">物料定位</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">期美科技</string>
@@ -35,4 +35,5 @@
     <string name="locate_update_success">定位成功!</string>
     <string name="locate_update_failed">定位失敗!</string>
     <string name="unknown_barcode">非物料或儲位條碼</string>
+    <string name="material_location">物料定位</string>
 </resources>
